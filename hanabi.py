@@ -33,15 +33,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Simulate a game of Hanabi with between 2-5 players.',
                                      formatter_class=argparse.RawTextHelpFormatter)
 
+    parser.add_argument('-r',
+                        action='store_true',
+                        help='include the rainbow suit as its own suit (default: False)')
     parser.add_argument('-p',
                         default=DEFAULT_SETUP,
                         type=lambda p: [p for p in p.split(', ')],
                         help= 'enter a list of 2-5 strategies as a string to set the number and type of players \n' + \
                              f'(default: a 2-player game specified as: -p \'{DEFAULT_SETUP}\') \n' + \
                              f'available strategies are: {AVAILABLE_STRATEGIES}')
-    parser.add_argument('-r',
-                        action='store_true',
-                        help='include the rainbow suit as its own suit (default: False)')
 
     args = parser.parse_args()
 
