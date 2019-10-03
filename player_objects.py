@@ -3,9 +3,7 @@ class Player:
     def __init__(self, id, strategy):
 
         self.id = id
-
         self.hand = []
-
         self._strategy = strategy
 
     def take_turn(self, players, game):

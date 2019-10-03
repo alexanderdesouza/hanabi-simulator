@@ -15,7 +15,7 @@ players with different strategies, can be added to the game by setting the `-p` 
 of the strategies of each player to be added to the game. For example, to setup and run a simulation of three players
 following arbitrary strategies `S1`, `S1`, and `S4`, run:
 ```
-python hanabi.py -p "S1, S1, S4"
+python hanabi.py -p 'S1, S1, S4'
 ```
 Player strategies are specified in `player_strategies.py`; examples are provided therein for how these should be
 formatted.
