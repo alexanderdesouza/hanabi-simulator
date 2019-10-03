@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/alexanderdesouza/hanabi-simulator/hanabi-banner.jpg">
+  <img src="https://github.com/alexanderdesouza/hanabi-simulator/blob/master/hanabi-banner.jpg">
 </p>
 
 This is a simulator for playing Hanabi, the wonderful, co-operative card game by Antoine Bauza. The simulator is run
