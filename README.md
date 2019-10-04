@@ -7,18 +7,18 @@ from the command-line as:
 ```
 python hanabi.py [-h] [-r] [-p P]
 ```
-The default game is configured with two automated-players that follow a simple strategy of randomly playing,
+The default game is configured with two automated-players that follow a simple strategy of randomly playing, 
 discarding, or giving each other hints. As usual, the rainbow colored cards can be used as wild-cards.
 
-The rainbow colored cards can also be added as their own sixth suit by setting the `-r` option. Additional players, or
-players with different strategies, can be added to the game by setting the `-p` option and then specifying a string
-of the strategies of each player to be added to the game. For example, to setup and run a simulation of three players
-following arbitrary strategies `S1`, `S1`, and `S4`, run:
+The rainbow colored cards can also be added as their own sixth suit by setting the `-r` option. Additional players can
+be added to the game by setting the `-p` option and then specifying a string of each of the player classes to be added
+to the game. For example, to setup and run a simulation of three players, of arbitrary player classes `P1`, `P1`, and
+`P4`, run:
 ```
-python hanabi.py -p 'S1, S1, S4'
+python hanabi.py -p 'P1, P1, P4'
 ```
-Player strategies are specified in `player_strategies.py`; examples are provided therein for how these should be
-formatted.
+The various player classes are specified in the `player_objects` module; `abstract_player.py` contains the abstract
+player class definition inherited by all other player classes.
 
 Adapted from BoardGameGeek (https://boardgamegeek.com/boardgame/98778/hanabi):
 > Hanabi—named for the Japanese word for "fireworks" (written as 花火, ideograms for flower and fire, respectively)—is
