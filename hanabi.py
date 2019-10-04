@@ -1,23 +1,36 @@
 import argparse
+import importlib
 import inspect
+import glob
 
 from game_engine import HanabiEngine
-import player_strategies
 
 
-AVAILABLE_STRATEGIES = [methods[0] for methods in inspect.getmembers(player_strategies, inspect.isfunction)]
-DEFAULT_SETUP = ', '.join([AVAILABLE_STRATEGIES[0]]*2)
-
-
-def validate_args(args):
+def _get_player_classes(file_path='./player_objects/'):
     """
     """
-    # assert that strategies passed from the command-line are valid
-    for strategy in args.p:
+    available_player_classes = [] 
+
+    file_names = [f.split('/')[-1] for f in glob.glob(f'{file_path}*.py')]
+
+    for f in file_names:
+        if f.startswith("__") or f.startswith('abstract'):
+            continue
+        module = importlib.import_module(f'.{f[:-3]}', package=file_path.split('/')[1])
+        player_class = [member[0] for member in inspect.getmembers(module, inspect.isclass) if member[0] != 'Player']
+        available_player_classes += player_class
+
+    return available_player_classes
+
+def validate_args(args, available_player_classes):
+    """
+    """
+    # assert that the player classes passed from the command-line are valid
+    for player_class in args.p:
         try:
-            assert(strategy in AVAILABLE_STRATEGIES)
+            assert(player_class in available_player_classes)
         except AssertionError:
-            print(f'Invalid player strategy: \'{strategy}\'. See help (-h) for available strategies.')
+            print(f'Invalid player class: \'{player_class}\'. See help (-h) for available classes.')
             return False
     return True
 
@@ -30,6 +43,9 @@ def main(players, rainbow_as_sixth):
 
 if __name__ == '__main__':
 
+    available_player_classes = _get_player_classes()
+    default_setup = 'Rando, Rando'
+
     parser = argparse.ArgumentParser(description='Simulate a game of Hanabi with between 2-5 players.',
                                      formatter_class=argparse.RawTextHelpFormatter)
 
@@ -37,13 +53,13 @@ if __name__ == '__main__':
                         action='store_true',
                         help='include the rainbow suit as its own suit (default: False)')
     parser.add_argument('-p',
-                        default=DEFAULT_SETUP,
+                        default=default_setup,
                         type=lambda p: [p for p in p.split(', ')],
-                        help= 'enter a list of 2-5 strategies as a string to set the number and type of players \n' + \
-                             f'(default: a 2-player game specified as: -p \'{DEFAULT_SETUP}\') \n' + \
-                             f'available strategies are: {AVAILABLE_STRATEGIES}')
+                        help= 'enter a list of 2-5 player classes, comma separated, to set the number and type of players \n' + \
+                             f'(default: a 2-player game specified as: -p \'{default_setup}\') \n' + \
+                             f'available player classes are: {available_player_classes}')
 
     args = parser.parse_args()
 
-    if validate_args(args):
+    if validate_args(args, available_player_classes):
         main(players=args.p, rainbow_as_sixth=args.r)
