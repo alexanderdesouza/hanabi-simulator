@@ -1,6 +1,6 @@
 import random
 
-from player_objects.abstract_player import Player
+from objects.player_objects import Player
 
 
 class Rando(Player):

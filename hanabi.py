@@ -3,18 +3,18 @@ import importlib
 import inspect
 import glob
 
-from game_engine import HanabiEngine
+from objects.game_engine import HanabiEngine
 
 
 def _get_player_classes():
     """Dynamically sources (for reference) the player classes defined in the player_objects module."""
     available_player_classes = [] 
 
-    file_path='./player_objects/'
+    file_path='./player_types/'
     file_names = [f.split('/')[-1] for f in glob.glob(f'{file_path}*.py')]
 
     for f in file_names:
-        if f.startswith("__") or f.startswith('abstract'):
+        if f.startswith("__"):
             continue
         module = importlib.import_module(f'.{f[:-3]}', package=file_path.split('/')[1])
         player_class = [member[0] for member in inspect.getmembers(module, inspect.isclass) if member[0] != 'Player']

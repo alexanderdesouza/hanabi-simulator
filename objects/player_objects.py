@@ -1,6 +1,23 @@
 from abc import abstractmethod
 
 
+class Hint:
+
+    def __init__(self, player_id, hint_type, cards):
+
+        self.player_id = player_id
+        self.hint_type = hint_type
+        self.cards = cards
+
+
+class Action:
+
+    def __init__(self, action, action_description):
+
+        self.action = action
+        self.action_description = action_description
+
+
 class Player:
 
     def __init__(self, id):

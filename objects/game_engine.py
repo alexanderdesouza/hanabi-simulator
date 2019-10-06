@@ -1,7 +1,7 @@
 import random
 
-from game_objects import GameState
-import player_objects
+from objects.game_objects import GameState
+import player_types
 
 
 class HanabiEngine:
@@ -9,7 +9,7 @@ class HanabiEngine:
     def __init__(self, players, rainbow_as_sixth):
 
         self.game = GameState(player_count=len(players), rainbow_as_sixth=rainbow_as_sixth)
-        self.players = [getattr(getattr(player_objects, p.lower()), p)(i) for i, p in enumerate(players)]
+        self.players = [getattr(getattr(player_types, p.lower()), p)(i) for i, p in enumerate(players)]
 
     def _setup(self):
         """Shuffle the deck and deal each player a hand of cards."""
