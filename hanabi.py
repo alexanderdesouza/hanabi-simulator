@@ -6,11 +6,11 @@ import glob
 from game_engine import HanabiEngine
 
 
-def _get_player_classes(file_path='./player_objects/'):
-    """
-    """
+def _get_player_classes():
+    """Dynamically sources (for reference) the player classes defined in the player_objects module."""
     available_player_classes = [] 
 
+    file_path='./player_objects/'
     file_names = [f.split('/')[-1] for f in glob.glob(f'{file_path}*.py')]
 
     for f in file_names:
@@ -23,7 +23,8 @@ def _get_player_classes(file_path='./player_objects/'):
     return available_player_classes
 
 def validate_args(args, available_player_classes):
-    """
+    """Validate the arguments passed from the command-line, so that only valid player classes (for example) can be
+    specified.
     """
     # assert that the player classes passed from the command-line are valid
     for player_class in args.p:
@@ -35,8 +36,7 @@ def validate_args(args, available_player_classes):
     return True
 
 def main(players, rainbow_as_sixth):
-    """
-    """
+    """Sets up a new Hanabi game engine and runs the game."""
     hanabi = HanabiEngine(players=players, rainbow_as_sixth=rainbow_as_sixth)
     hanabi.run()
 
@@ -55,9 +55,9 @@ if __name__ == '__main__':
     parser.add_argument('-p',
                         default=default_setup,
                         type=lambda p: [p for p in p.split(', ')],
-                        help= 'enter a list of 2-5 player classes, comma separated, to set the number and type of players \n' + \
-                             f'(default: a 2-player game specified as: -p \'{default_setup}\') \n' + \
-                             f'available player classes are: {available_player_classes}')
+                        help='enter 2-5 comma separated classes to set the number and type of players \n' \
+                              + f'(default: a 2-player game specified as: -p \'{default_setup}\') \n' \
+                              + f'available player classes are: {available_player_classes}')
 
     args = parser.parse_args()
 

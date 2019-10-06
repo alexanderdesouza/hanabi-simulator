@@ -9,19 +9,9 @@ class Rando(Player):
         super().__init__(id)
 
     def _strategy(self, players, game):
-        """
-        This strategy selects an action and action description completely at random. It's choices are bound only by the
-        current state of the game (e.g., it will not try to provide a hint if there are no more available hints).
-
-        For the 'play' and 'discard' actions, the action description must be a single integer representing the position of
-        the card to be played or discarded in the acting player's hand.
-
-        For the 'hint' action, the action description consists of a dict whose key is the integer player-ID to whom the
-        hint is being given. The value is another dict, whose own key is a string, either a number or color (represented by
-        a single letter), and the value is a list of integers representing the position of the cards in the other player's
-        hand to which the hint applies.
-
-        Use this method as a template for how a strategy is constructed and for how the return object must be constructed.
+        """This strategy selects an action and action description completely at random. It's choices are bound by the
+        current state of the game (e.g., it will not try to provide a hint if there are no more available hints). This
+        method serves as a template for how a strategy is constructed.
         """
         available_actions = ['play', 'discard']
         # if game.hints > 0:

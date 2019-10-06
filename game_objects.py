@@ -15,12 +15,20 @@ class Card:
         self._suspected_value = None
     
     def suit(self, player_id):
+        """Look at the suit of a given card. A player looking at another player's card sees the card's true suit,
+        whereas a player looking at one of their own cards sees only what they suspect about the card via potential
+        hints.
+        """
         return self._suspected_suit if player_id == self.player_id else self._true_suit
     
     def value(self, player_id):
+        """Look at the value of a given card. A player looking at another player's card sees the card's true value,
+        whereas a player looking at one of their own cards sees only what they suspect about the card via potential
+        hints."""
         return self._suspected_value if player_id == self.player_id else self._true_value
     
-    def get_hint(self, **kwargs):
+    def apply_hint(self, **kwargs):
+        """Set the suit or value of a card in a given player's hand, usually after receiving a hint."""
         self._suspected_suit = kwargs.get('suit', self._suspected_suit)
         self._suspected_value = kwargs.get('value', self._suspected_value)
 
@@ -32,15 +40,17 @@ class Deck:
         self.CARD_VALUES_ARRAY = [1, 2, 3, 4, 5]
         self.CARD_FREQUENCY_ARRAY = [3, 2, 2, 2, 1]
         self.CARD_SINGLE_SUIT_ARRAY = [[v]*f for v, f in zip(self.CARD_VALUES_ARRAY, self.CARD_FREQUENCY_ARRAY)]
-        self.CARD_SINGLE_SUIT_ARRAY = list(itertools.chain(*self.CARD_SINGLE_SUIT_ARRAY))  # flattens the above sequence
+        self.CARD_SINGLE_SUIT_ARRAY = list(itertools.chain(*self.CARD_SINGLE_SUIT_ARRAY))  # flatten the above sequence
         self.CARD_SUIT_TYPE_ARRAY = ['Red', 'Yellow', 'Green', 'Blue', 'White', 'Rainbow']
 
         self.cards = [Card(suit, value) for value in self.CARD_SINGLE_SUIT_ARRAY for suit in self.CARD_SUIT_TYPE_ARRAY]
 
     def shuffle(self):
+        """Shuffle the deck of card objects."""
         self.cards = random.sample(self.cards, len(self.cards))
 
     def deal(self, number_of_cards, player_id):
+        """Distribute a fixed number of cards to a specific player."""
         cards_to_deal = [self.cards.pop(0) for i in range(number_of_cards)]
         for c in cards_to_deal:
             c.player_id = player_id
@@ -72,9 +82,7 @@ class GameState:
         self.is_game_over = False
 
     def print_game_state(self):
-        """
-        Prints the current game state to the terminal in a human readable format.
-        """
+        """Prints the current game state to the terminal in a human readable format."""
         print(f'Game state at end of round-{self.game_round}:')
         print('\tPiles:')
         for suit, pile in self.piles.items():
@@ -83,8 +91,7 @@ class GameState:
         print(f'\tMistakes remaining: {self.mistakes}/{self.MAX_MISTAKES}')
 
     def _are_all_piles_complete(self):
-        """
-        Iterate over the self.piles object, and determine if the cards for a each suit have been played
+        """Iterate over the self.piles object, and determine if the cards for a each suit have been played
         sequentially.
         """
         for suit, pile in self.piles.items():
@@ -93,10 +100,8 @@ class GameState:
         return True
 
     def evaluate_game_state(self, current_player):
-        """
-        Deal an additional card to a player if needed and check whether or not the deck has been expired
-        or the players have collectively made too many mistakes. Then check the piles to see if they are
-        complete.
+        """Deal an additional card to a player if needed and check whether or not the deck has been expired or the
+        players have collectively made too many mistakes. Then check the piles to see if they are complete.
         """
         if len(current_player.hand) < self.hand_size:
             if len(self.deck.cards) > 0:
