@@ -35,9 +35,9 @@ def validate_args(args, available_player_classes):
             return False
     return True
 
-def main(players, rainbow_as_sixth):
+def main(players, rainbow_as_sixth, is_test):
     """Sets up a new Hanabi game engine and runs the game."""
-    hanabi = HanabiEngine(players=players, rainbow_as_sixth=rainbow_as_sixth)
+    hanabi = HanabiEngine(players=players, rainbow_as_sixth=rainbow_as_sixth, is_test=is_test)
     hanabi.run()
 
 
@@ -49,6 +49,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Simulate a game of Hanabi with between 2-5 players.',
                                      formatter_class=argparse.RawTextHelpFormatter)
 
+    parser.add_argument('-t',
+                        action='store_true',
+                        help='run in test mode: iterate a single round of all players and then exit')
     parser.add_argument('-r',
                         action='store_true',
                         help='include the rainbow suit as its own suit (default: False)')
@@ -62,4 +65,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if validate_args(args, available_player_classes):
-        main(players=args.p, rainbow_as_sixth=args.r)
+        main(players=args.p, rainbow_as_sixth=args.r, is_test=args.t)

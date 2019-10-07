@@ -6,10 +6,12 @@ import player_types
 
 class HanabiEngine:
 
-    def __init__(self, players, rainbow_as_sixth):
+    def __init__(self, players, rainbow_as_sixth, is_test=False):
 
         self.game = GameState(player_count=len(players), rainbow_as_sixth=rainbow_as_sixth)
         self.players = [getattr(getattr(player_types, p.lower()), p)(i) for i, p in enumerate(players)]
+        
+        self.is_test = is_test
 
     def _setup(self):
         """Shuffle the deck and deal each player a hand of cards."""
@@ -43,6 +45,7 @@ class HanabiEngine:
             print(f'Game state at end of round-{self.game.game_round}:\n{self.game.__str__()}')
             self.game.game_round += 1
 
-            self.game.is_game_over = True  # NOTE: for testing only, causes a hard exit after one round
+            if self.is_test:
+                self.game.is_game_over = True
 
         print('Game over!')
