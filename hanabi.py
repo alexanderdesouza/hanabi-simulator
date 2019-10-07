@@ -17,7 +17,10 @@ def _get_player_classes():
         if f.startswith("__"):
             continue
         module = importlib.import_module(f'.{f[:-3]}', package=file_path.split('/')[1])
-        player_class = [member[0] for member in inspect.getmembers(module, inspect.isclass) if member[0] != 'Player']
+        player_class = [
+            member[0] for member in inspect.getmembers(module, inspect.isclass) \
+            if member[0] not in ['Player', 'Action', 'Card', 'Hint']
+        ]
         available_player_classes += player_class
 
     return available_player_classes

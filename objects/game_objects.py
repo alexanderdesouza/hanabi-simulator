@@ -92,12 +92,11 @@ class GameState:
 
     def __str__(self):
         """Return a string representation of the current game state."""
-        return_string = '\tPiles: ' \
-         + ' '.join([f'{suit}: {pile}' for suit, pile in self.piles.items()]) \
-         + '\n' \
+        return f'Game state: Round-{self.game_round}:\n' \
+         +  '\tPiles: ' + ' '.join([f'{suit}: {pile}' for suit, pile in self.piles.items()]) + '\n' \
+         + f'\tLatest discard: {None if len(self.discard_pile)==0 else self.discard_pile[-1]} \n' \
          + f'\tHints remaining: {self.hints}/{self.MAX_HINTS}\n' \
          + f'\tMistakes remaining: {self.mistakes}/{self.MAX_MISTAKES}'
-        return return_string
 
     def _are_all_piles_complete(self):
         """Iterate over the self.piles object, and determine if the cards for a each suit have been played

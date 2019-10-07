@@ -42,4 +42,4 @@ class Rando(Player):
             # assemble the choices into the action_description, which for 
             action_description = Hint(receiving_player_id, hint_type, cards)
 
-        return Action(action, action_description)
+        return Action(self.id, action, action_description)

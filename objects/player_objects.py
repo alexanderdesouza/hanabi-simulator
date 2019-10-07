@@ -16,14 +16,15 @@ class Hint:
 
 class Action:
 
-    def __init__(self, action, action_description):
+    def __init__(self, player_id, action, action_description):
 
+        self.player_id = player_id
         self.action = action
         self.action_description = action_description
 
     def __str__(self):
         """Return a string representation of the Action object."""
-        return f'{self.action.capitalize()}: {self.action_description.__str__()}'
+        return f'Player-{self.player_id}\'s action:\n\t{self.action.capitalize()}: {self.action_description.__str__()}'
 
 
 class Player:

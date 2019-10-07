@@ -19,6 +19,18 @@ class HanabiEngine:
         for player in self.players:
             player.hand = self.game.deck.deal(number_of_cards=self.game.hand_size, player_id=player.id)
 
+    def _update_game_objects(self, action):
+        """Update the game and player objects based on the supplied Action."""
+        if action.action == 'play':
+            self.players[action.player_id].hand.remove(action.action_description)
+            # TODO: logic around where this card was played
+        elif action.action == 'discard':
+            self.players[action.player_id].hand.remove(action.action_description)
+            self.game.discard_pile.append(action.action_description)
+        elif action.action in ['hint']:
+            # TODO: logic around digesting the hint
+            pass
+
     def run(self):
         """On their turn each player will look around to see what cards are visible in their companions' hands, make
         deductions based on the available information, and then take their turn (play, discard, or give a hint). The
@@ -31,18 +43,16 @@ class HanabiEngine:
             for player in self.players:
 
                 action = player.take_turn(self.players, self.game)
-                print(f'Player-{player.id}\'s turn:\n\t{action.__str__()}')
+                print(f'{action.__str__()}')
 
-                # TODO:
-                # * update the game state based on the supplied action
-                # * something like: self.game.update_game_state(action)
+                self._update_game_objects(action)
 
                 self.game.evaluate_game_state(player)
 
                 if self.game.is_game_over:
                     break
 
-            print(f'Game state at end of round-{self.game.game_round}:\n{self.game.__str__()}')
+            print(f'{self.game.__str__()}')
             self.game.game_round += 1
 
             if self.is_test:
