@@ -13,19 +13,26 @@ class Card:
 
         self._suspected_suit = None
         self._suspected_value = None
-    
-    def suit(self, player_id):
+
+    def __str__(self, is_visible=True):
+        """Return a string representation of the card."""
+        return f'({self.suit(is_visible)}, {self.value(is_visible)})'
+
+    def suit(self, is_visible=True):
         """Look at the suit of a given card. A player looking at another player's card sees the card's true suit,
         whereas a player looking at one of their own cards sees only what they suspect about the card via potential
         hints.
+            :param: is_visible: whether or not the card face is visible to the current player
         """
-        return self._suspected_suit if player_id == self.player_id else self._true_suit
+        return self._true_suit if is_visible == True else self._suspected_suit
     
-    def value(self, player_id):
+    def value(self, is_visible=True):
         """Look at the value of a given card. A player looking at another player's card sees the card's true value,
         whereas a player looking at one of their own cards sees only what they suspect about the card via potential
-        hints."""
-        return self._suspected_value if player_id == self.player_id else self._true_value
+        hints.
+            :param: is_visible: whether or not the card face is visible to the current player
+        """
+        return self._true_value if is_visible == True else self._suspected_value
     
     def apply_hint(self, **kwargs):
         """Set the suit or value of a card in a given player's hand, usually after receiving a hint."""
@@ -61,10 +68,12 @@ class GameState:
 
     def __init__(self, player_count, rainbow_as_sixth=False, max_hints=8, max_mistakes=4):
 
+        self.rainbow_as_sixth = rainbow_as_sixth
+
         self.deck = Deck()
 
         self.piles = {suit: [] for suit in self.deck.CARD_SUIT_TYPE_ARRAY}
-        if not rainbow_as_sixth:
+        if not self.rainbow_as_sixth:
             del self.piles['Rainbow']
 
         self.discard_pile = []
@@ -81,14 +90,14 @@ class GameState:
         self.game_round = 0
         self.is_game_over = False
 
-    def print_game_state(self):
-        """Prints the current game state to the terminal in a human readable format."""
-        print(f'Game state at end of round-{self.game_round}:')
-        print('\tPiles:')
-        for suit, pile in self.piles.items():
-            print(f'\t\t{suit}: {pile}')
-        print(f'\tHints remaining: {self.hints}/{self.MAX_HINTS}')
-        print(f'\tMistakes remaining: {self.mistakes}/{self.MAX_MISTAKES}')
+    def __str__(self):
+        """Return a string representation of the current game state."""
+        return_string = '\tPiles: ' \
+         + ' '.join([f'{suit}: {pile}' for suit, pile in self.piles.items()]) \
+         + '\n' \
+         + f'\tHints remaining: {self.hints}/{self.MAX_HINTS}\n' \
+         + f'\tMistakes remaining: {self.mistakes}/{self.MAX_MISTAKES}'
+        return return_string
 
     def _are_all_piles_complete(self):
         """Iterate over the self.piles object, and determine if the cards for a each suit have been played

@@ -28,22 +28,21 @@ class HanabiEngine:
 
             for player in self.players:
 
-                print(f'Player-{player.id}\'s turn:')
-                # TODO:
                 action = player.take_turn(self.players, self.game)
-                print(f'\t{action}')
+                print(f'Player-{player.id}\'s turn:\n\t{action.__str__()}')
 
                 # TODO:
                 # * update the game state based on the supplied action
                 # * something like: self.game.update_game_state(action)
 
                 self.game.evaluate_game_state(player)
+
                 if self.game.is_game_over:
                     break
 
-            self.game.print_game_state()
+            print(f'Game state at end of round-{self.game.game_round}:\n{self.game.__str__()}')
             self.game.game_round += 1
 
-            self.game.is_game_over = True  # TODO: for testing only, causes a hard exit after one round
+            self.game.is_game_over = True  # NOTE: for testing only, causes a hard exit after one round
 
         print('Game over!')

@@ -1,6 +1,7 @@
 import random
 
-from objects.player_objects import Player
+from objects.game_objects import Card
+from objects.player_objects import Player, Action, Hint
 
 
 class Rando(Player):
@@ -14,8 +15,8 @@ class Rando(Player):
         method serves as a template for how a strategy is constructed.
         """
         available_actions = ['play', 'discard']
-        # if game.hints > 0:
-        #     available_actions.append('hint')
+        if game.hints > 0:
+            available_actions.append('hint')
         action = random.choice(available_actions)
 
         if action in ['play', 'discard']:
@@ -24,16 +25,21 @@ class Rando(Player):
 
         elif action in ['hint']:
             # give hint to another player selected at random
-            player_id_to_get_hint = random.choice([player.id for player in players if player.id != self.id])
+            receiving_player_id = random.choice([player.id for player in players if player.id != self.id])
             
             # select a random card from their hand and randomly decide to give a hint about that card's suit or value
-            card = random.choice(players[player_id_to_get_hint].hand)
-            if not game.rainbow_as_sixth and card.suit(self.id) == 'Rainbow':
-                hint = card.value(self.id)
-            else:
-                hint = random.choice([card.suit(self.id), card.value(self.id)])
+            selected_card = random.choice(players[receiving_player_id].hand)
+            hint_type = 'value' \
+                if not game.rainbow_as_sixth and selected_card.suit() == 'Rainbow' \
+                else random.choice(['suit', 'value'])
+
+            # determine which other card's in that player's hand the hint applies to
+            cards = []
+            for card in players[receiving_player_id].hand:
+                if getattr(card, hint_type)() == getattr(selected_card, hint_type)():
+                    cards += [card]
             
             # assemble the choices into the action_description, which for 
-            action_description = {}  # TODO: Finish writing action description for hinting
+            action_description = Hint(receiving_player_id, hint_type, cards)
 
-        return {action: action_description}
+        return Action(action, action_description)

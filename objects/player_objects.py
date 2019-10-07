@@ -7,7 +7,11 @@ class Hint:
 
         self.player_id = player_id
         self.hint_type = hint_type
-        self.cards = cards
+        self.hint_cards = cards
+
+    def __str__(self):
+        """Return a string representation of the Hint object."""
+        return f'To Player-{self.player_id} the {self.hint_type} of {[c.__str__() for c in self.hint_cards]}.'
 
 
 class Action:
@@ -16,6 +20,10 @@ class Action:
 
         self.action = action
         self.action_description = action_description
+
+    def __str__(self):
+        """Return a string representation of the Action object."""
+        return f'{self.action.capitalize()}: {self.action_description.__str__()}'
 
 
 class Player:
