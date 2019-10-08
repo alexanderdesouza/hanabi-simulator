@@ -1,6 +1,6 @@
 import random
 
-from objects.game_objects import GameState
+from objects.game_objects import GameState, Card
 import player_types
 
 
@@ -17,19 +17,41 @@ class HanabiEngine:
         """Shuffle the deck and deal each player a hand of cards."""
         self.game.deck.shuffle()
         for player in self.players:
-            player.hand = self.game.deck.deal(number_of_cards=self.game.hand_size, player_id=player.id)
+            player.hand = self.game.deck.deal(number_of_cards=self.game.hand_size)
 
-    def _update_game_objects(self, action):
-        """Update the game and player objects based on the supplied Action."""
-        if action.action == 'play':
-            self.players[action.player_id].hand.remove(action.action_description)
-            # TODO: logic around where this card was played
-        elif action.action == 'discard':
-            self.players[action.player_id].hand.remove(action.action_description)
-            self.game.discard_pile.append(action.action_description)
-        elif action.action in ['hint']:
-            # TODO: logic around digesting the hint
-            pass
+    def _resolve_play(self, action):
+        """First, remove the selected card from the players hand. Then determine which pile to add it to, and confirm
+        that the card is being added in the correct sequence. If not, tally a mistake as having been made.
+        """
+        played_card = action.action_description
+        self.players[action.player_id].hand.remove(played_card)
+        played_card.player_id = None
+
+        pile = self.game.piles[played_card.suit()]
+        latest_card = None if len(pile)==0 else pile[-1]
+        expected_card = Card(played_card.suit(), 1) if latest_card is None else Card(latest_card.suit(), latest_card.value()+1)
+
+        if played_card == expected_card:  # TODO: resolve comparisons with Rainbow cards
+            self.game.piles[played_card.suit()].append(played_card)
+            print(f'\tCorrectly played {played_card} to {played_card.suit()} pile.')
+        else:
+            self.game.discard_pile.append(played_card)
+            self.game.mistakes -= 1
+            print(f'\tMistake: Expected {expected_card}. Card is discarded.')
+
+    def _resolve_discard(self, action):
+        """Discard the selected card to the discard_pile object list."""
+        self.players[action.player_id].hand.remove(action.action_description)
+        self.game.discard_pile.append(action.action_description)
+
+    def _resolve_hint(self, action):
+        """Reduce the number of remaining hints by 1. Then, update the target player's hand with the information
+        granted by the hint.
+        """
+        self.game.hints -= 1
+
+        # TODO: logic around digesting the hint
+        pass
 
     def run(self):
         """On their turn each player will look around to see what cards are visible in their companions' hands, make
@@ -45,7 +67,7 @@ class HanabiEngine:
                 action = player.take_turn(self.players, self.game)
                 print(f'{action.__str__()}')
 
-                self._update_game_objects(action)
+                getattr(self, '_resolve_'+action.action)(action)  # calls the relevant action resolution method
 
                 self.game.evaluate_game_state(player)
 

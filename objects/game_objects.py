@@ -6,13 +6,15 @@ class Card:
     
     def __init__(self, suit, value):
 
-        self.player_id = None  # ID of the player currently in possession of this card; None otherwise
-
         self._true_suit = suit
         self._true_value = value
 
         self._suspected_suit = None
         self._suspected_value = None
+
+    def __eq__(self, other):
+        """Allows comparison of two instances of a card."""
+        return self._true_suit == other._true_suit and self._true_value == other._true_value
 
     def __str__(self, is_visible=True):
         """Return a string representation of the card."""
@@ -56,12 +58,9 @@ class Deck:
         """Shuffle the deck of card objects."""
         self.cards = random.sample(self.cards, len(self.cards))
 
-    def deal(self, number_of_cards, player_id):
+    def deal(self, number_of_cards):
         """Distribute a fixed number of cards to a specific player."""
-        cards_to_deal = [self.cards.pop(0) for i in range(number_of_cards)]
-        for c in cards_to_deal:
-            c.player_id = player_id
-        return cards_to_deal
+        return [self.cards.pop(0) for i in range(number_of_cards)]
 
 
 class GameState:
@@ -93,10 +92,14 @@ class GameState:
     def __str__(self):
         """Return a string representation of the current game state."""
         return f'Game state: Round-{self.game_round}:\n' \
-         +  '\tPiles: ' + ' '.join([f'{suit}: {pile}' for suit, pile in self.piles.items()]) + '\n' \
+         + f'\tPiles: {self._piles_str()} \n' \
          + f'\tLatest discard: {None if len(self.discard_pile)==0 else self.discard_pile[-1]} \n' \
          + f'\tHints remaining: {self.hints}/{self.MAX_HINTS}\n' \
          + f'\tMistakes remaining: {self.mistakes}/{self.MAX_MISTAKES}'
+
+    def _piles_str(self):
+        """Return a string representation of the self.piles object, which is a dict of lists."""
+        return ' '.join([f'{suit}: {[p.__str__() for p in pile]}' for suit, pile in self.piles.items()])
 
     def _are_all_piles_complete(self):
         """Iterate over the self.piles object, and determine if the cards for a each suit have been played
@@ -114,7 +117,7 @@ class GameState:
         if len(current_player.hand) < self.hand_size:
             if len(self.deck.cards) > 0:
                 number_of_cards = self.hand_size-len(current_player.hand)
-                current_player.hand += self.deck.deal(number_of_cards=number_of_cards, player_id=current_player.id)
+                current_player.hand += self.deck.deal(number_of_cards=number_of_cards)
             else:
                 self.is_game_over = True
 
