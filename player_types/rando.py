@@ -21,25 +21,20 @@ class Rando(Player):
 
         if action in ['play', 'discard']:
             # select one card to play or discard at random
-            action_description = random.choice(self.hand)
+            description = random.choice(self.hand)
 
         elif action in ['hint']:
-            # give hint to another player selected at random
-            receiving_player_id = random.choice([player.id for player in players if player.id != self.id])
+            # give hint to another randomly selected player
+            target_player_id = random.choice([player.id for player in players if player.id != self.id])
             
             # select a random card from their hand and randomly decide to give a hint about that card's suit or value
-            selected_card = random.choice(players[receiving_player_id].hand)
+            selected_card = random.choice(players[target_player_id].hand)
             hint_type = 'value' \
                 if not game.rainbow_as_sixth and selected_card.suit() == 'Rainbow' \
                 else random.choice(['suit', 'value'])
-
-            # determine which other card's in that player's hand the hint applies to
-            cards = []
-            for card in players[receiving_player_id].hand:
-                if getattr(card, hint_type)() == getattr(selected_card, hint_type)():
-                    cards += [card]
+            hint_value = getattr(selected_card, hint_type)()
             
-            # assemble the choices into the action_description, which for 
-            action_description = Hint(receiving_player_id, hint_type, cards)
+            # assemble the choices into the action's description
+            description = Hint(target_player_id, hint_type, hint_value)
 
-        return Action(self.id, action, action_description)
+        return Action(self.id, action, description)

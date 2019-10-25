@@ -23,15 +23,14 @@ class HanabiEngine:
         """First, remove the selected card from the players hand. Then determine which pile to add it to, and confirm
         that the card is being added in the correct sequence. If not, tally a mistake as having been made.
         """
-        played_card = action.action_description
+        played_card = action.description
         self.players[action.player_id].hand.remove(played_card)
-        played_card.player_id = None
 
         pile = self.game.piles[played_card.suit()]
         latest_card = None if len(pile)==0 else pile[-1]
         expected_card = Card(played_card.suit(), 1) if latest_card is None else Card(latest_card.suit(), latest_card.value()+1)
 
-        if played_card == expected_card:  # TODO: resolve comparisons with Rainbow cards
+        if played_card == expected_card:  # TODO: resolve comparisons with Rainbow cards; need to target piles
             self.game.piles[played_card.suit()].append(played_card)
             print(f'\tCorrectly played {played_card} to {played_card.suit()} pile.')
         else:
@@ -41,8 +40,8 @@ class HanabiEngine:
 
     def _resolve_discard(self, action):
         """Discard the selected card to the discard_pile object list."""
-        self.players[action.player_id].hand.remove(action.action_description)
-        self.game.discard_pile.append(action.action_description)
+        self.players[action.player_id].hand.remove(action.description)
+        self.game.discard_pile.append(action.description)
 
     def _resolve_hint(self, action):
         """Reduce the number of remaining hints by 1. Then, update the target player's hand with the information
@@ -50,8 +49,10 @@ class HanabiEngine:
         """
         self.game.hints -= 1
 
-        # TODO: logic around digesting the hint
-        pass
+        target_player_id = action.description.player_id
+        for card in self.players[target_player_id].hand:
+            if getattr(card, action.description.hint_type)() == action.description.hint_value:
+                card.apply_hint(action.description)
 
     def run(self):
         """On their turn each player will look around to see what cards are visible in their companions' hands, make
@@ -67,7 +68,7 @@ class HanabiEngine:
                 action = player.take_turn(self.players, self.game)
                 print(f'{action.__str__()}')
 
-                getattr(self, '_resolve_'+action.action)(action)  # calls the relevant action resolution method
+                getattr(self, '_resolve_'+action.action)(action)  # calls the relevant action-resolution method
 
                 self.game.evaluate_game_state(player)
 

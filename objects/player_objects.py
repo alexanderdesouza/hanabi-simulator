@@ -3,28 +3,28 @@ from abc import abstractmethod
 
 class Hint:
 
-    def __init__(self, player_id, hint_type, cards):
+    def __init__(self, player_id, hint_type, value):
 
         self.player_id = player_id
         self.hint_type = hint_type
-        self.hint_cards = cards
+        self.hint_value = value
 
     def __str__(self):
         """Return a string representation of the Hint object."""
-        return f'To Player-{self.player_id} the {self.hint_type} of {[c.__str__() for c in self.hint_cards]}.'
+        return f'Player-{self.player_id} learns which of their cards are {self.hint_value}(s).'
 
 
 class Action:
 
-    def __init__(self, player_id, action, action_description):
+    def __init__(self, player_id, action, description):
 
         self.player_id = player_id
         self.action = action
-        self.action_description = action_description
+        self.description = description
 
     def __str__(self):
         """Return a string representation of the Action object."""
-        return f'Player-{self.player_id}\'s action:\n\t{self.action.capitalize()}: {self.action_description.__str__()}'
+        return f'Player-{self.player_id}\'s action:\n\t{self.action.capitalize()}: {self.description.__str__()}'
 
 
 class Player:

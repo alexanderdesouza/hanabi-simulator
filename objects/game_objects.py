@@ -13,12 +13,12 @@ class Card:
         self._suspected_value = None
 
     def __eq__(self, other):
-        """Allows comparison of two instances of a card."""
+        """Allows comparison of two instances of a card based on their true suits and values."""
         return self._true_suit == other._true_suit and self._true_value == other._true_value
 
     def __str__(self, is_visible=True):
         """Return a string representation of the card."""
-        return f'({self.suit(is_visible)}, {self.value(is_visible)})'
+        return f'{self.suit(is_visible)}-{self.value(is_visible)}'
 
     def suit(self, is_visible=True):
         """Look at the suit of a given card. A player looking at another player's card sees the card's true suit,
@@ -27,7 +27,7 @@ class Card:
             :param: is_visible: whether or not the card face is visible to the current player
         """
         return self._true_suit if is_visible == True else self._suspected_suit
-    
+
     def value(self, is_visible=True):
         """Look at the value of a given card. A player looking at another player's card sees the card's true value,
         whereas a player looking at one of their own cards sees only what they suspect about the card via potential
@@ -35,11 +35,14 @@ class Card:
             :param: is_visible: whether or not the card face is visible to the current player
         """
         return self._true_value if is_visible == True else self._suspected_value
-    
-    def apply_hint(self, **kwargs):
+
+    def apply_hint(self, description):
         """Set the suit or value of a card in a given player's hand, usually after receiving a hint."""
-        self._suspected_suit = kwargs.get('suit', self._suspected_suit)
-        self._suspected_value = kwargs.get('value', self._suspected_value)
+        # getattr(self, '_suspected_'+description.hint_type) = description.hint_value  # TODO: is this possible?
+        if description.hint_type == 'suit':
+            self._suspected_suit = description.hint_value
+        if description.hint_type == 'value':
+            self._suspected_value = description.hint_value
 
 
 class Deck:
@@ -65,7 +68,7 @@ class Deck:
 
 class GameState:
 
-    def __init__(self, player_count, rainbow_as_sixth=False, max_hints=8, max_mistakes=4):
+    def __init__(self, player_count, rainbow_as_sixth=False, max_hints=8, max_mistakes=3):
 
         self.rainbow_as_sixth = rainbow_as_sixth
 
@@ -114,6 +117,7 @@ class GameState:
         """Deal an additional card to a player if needed and check whether or not the deck has been expired or the
         players have collectively made too many mistakes. Then check the piles to see if they are complete.
         """
+        # TODO: Implement mechanism for final round tracking as the game permits one additional turn per player.
         if len(current_player.hand) < self.hand_size:
             if len(self.deck.cards) > 0:
                 number_of_cards = self.hand_size-len(current_player.hand)
