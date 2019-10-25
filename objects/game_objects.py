@@ -117,12 +117,13 @@ class GameState:
         """Deal an additional card to a player if needed and check whether or not the deck has been expired or the
         players have collectively made too many mistakes. Then check the piles to see if they are complete.
         """
-        # TODO: Implement mechanism for final round tracking as the game permits one additional turn per player.
         if len(current_player.hand) < self.hand_size:
-            if len(self.deck.cards) > 0:
+            if len(self.deck.cards) > 0 and current_player.is_final_turn == False:
                 number_of_cards = self.hand_size-len(current_player.hand)
                 current_player.hand += self.deck.deal(number_of_cards=number_of_cards)
-            else:
+            elif len(self.deck.cards) == 0 and current_player.is_final_turn == False:
+                current_player.is_final_turn = True
+            elif len(self.deck.cards) == 0 and current_player.is_final_turn == True:
                 self.is_game_over = True
 
         if self.mistakes == 0:

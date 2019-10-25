@@ -33,6 +33,7 @@ class Player:
 
         self.id = id
         self.hand = []
+        self.is_final_turn = False
 
     @abstractmethod
     def _strategy(self, players, game):
