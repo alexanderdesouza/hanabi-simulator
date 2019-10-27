@@ -31,7 +31,7 @@ class HanabiEngine:
         target_suits = self.game.piles.keys() if played_card.suit()=='Rainbow' and ~self.game.rainbow_as_sixth \
                                               else played_card.suit()
 
-        for target_suit, target_pile in self.game.piles.items():
+        for target_suit, target_pile in sorted(self.game.piles.items(), key=lambda kvp: len(kvp[1])):
             if (target_suit in target_suits) and \
                ((len(target_pile)==0 and played_card.value()==1) or \
                (len(target_pile)>0 and played_card.value()==target_pile[-1].value()+1)):
