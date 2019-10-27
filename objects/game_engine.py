@@ -23,20 +23,27 @@ class HanabiEngine:
         """First, remove the selected card from the players hand. Then determine which pile to add it to, and confirm
         that the card is being added in the correct sequence. If not, tally a mistake as having been made.
         """
+        played_correctly = False
+
         played_card = action.description
         self.players[action.player_id].hand.remove(played_card)
 
-        pile = self.game.piles[played_card.suit()]
-        latest_card = None if len(pile)==0 else pile[-1]
-        expected_card = Card(played_card.suit(), 1) if latest_card is None else Card(latest_card.suit(), latest_card.value()+1)
+        target_suits = self.game.piles.keys() if played_card.suit()=='Rainbow' and ~self.game.rainbow_as_sixth \
+                                              else played_card.suit()
 
-        if played_card == expected_card:  # TODO: resolve comparisons with Rainbow cards; need to target piles
-            self.game.piles[played_card.suit()].append(played_card)
-            print(f'\tCorrectly played {played_card} to {played_card.suit()} pile.')
-        else:
+        for target_suit, target_pile in self.game.piles.items():
+            if (target_suit in target_suits) and \
+               ((len(target_pile)==0 and played_card.value()==1) or \
+               (len(target_pile)>0 and played_card.value()==target_pile[-1].value()+1)):
+                self.game.piles[target_suit].append(played_card)
+                print(f'\tCorrectly plays {played_card} to {target_suit} pile.')
+                played_correctly = True
+                break
+
+        if not played_correctly:
             self.game.discard_pile.append(played_card)
             self.game.mistakes -= 1
-            print(f'\tMistake: Expected {expected_card}. Card is discarded.')
+            print(f'\tMistake: Could not play {played_card}; card is discarded.')
 
     def _resolve_discard(self, action):
         """Discard the selected card to the discard_pile object list."""

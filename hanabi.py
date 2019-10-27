@@ -50,20 +50,20 @@ if __name__ == '__main__':
     default_setup = 'Rando, Rando'
 
     parser = argparse.ArgumentParser(description='Simulate a game of Hanabi with between 2-5 players.',
-                                     formatter_class=argparse.RawTextHelpFormatter)
+                                     formatter_class=argparse.RawTextHelpFormatter)  # allows multi-line help strings
 
-    parser.add_argument('-t',
-                        action='store_true',
-                        help='run in test mode: iterate a single round of all players and then exit')
-    parser.add_argument('-r',
-                        action='store_true',
-                        help='include the rainbow suit as its own suit (default: False)')
     parser.add_argument('-p',
                         default=default_setup,
                         type=lambda p: [p for p in p.split(', ')],
                         help='enter 2-5 comma separated classes to set the number and type of players \n' \
                               + f'(default: a 2-player game specified as: -p \'{default_setup}\') \n' \
                               + f'available player classes are: {available_player_classes}')
+    parser.add_argument('-r',
+                        action='store_true',
+                        help='include the rainbow suit as its own suit (default: False)')
+    parser.add_argument('-t',
+                        action='store_true',
+                        help='run in test mode: iterate a single round of all players and then exit')
 
     args = parser.parse_args()
 

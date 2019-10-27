@@ -109,7 +109,7 @@ class GameState:
         sequentially.
         """
         for suit, pile in self.piles.items():
-            if [card.true_value for card in pile] != self.deck.CARD_VALUES_ARRAY:
+            if [card.value() for card in pile] != self.deck.CARD_VALUES_ARRAY:
                 return False
         return True
 
