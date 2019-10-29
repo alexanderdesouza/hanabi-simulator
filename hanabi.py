@@ -63,7 +63,7 @@ if __name__ == '__main__':
                         help='include the rainbow suit as its own suit (default: False)')
     parser.add_argument('-t',
                         action='store_true',
-                        help='run in test mode: iterate a single round of all players and then exit')
+                        help='run in test mode: iterate a single round for all players and then exit')
 
     args = parser.parse_args()
 

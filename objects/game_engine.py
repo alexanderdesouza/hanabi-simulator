@@ -75,7 +75,7 @@ class HanabiEngine:
                 action = player.take_turn(self.players, self.game)
                 print(f'{action.__str__()}')
 
-                getattr(self, '_resolve_'+action.action)(action)  # calls the relevant action-resolution method
+                getattr(self, f'_resolve_{action.action}')(action)  # calls the relevant action-resolution method
 
                 self.game.evaluate_game_state(player)
 

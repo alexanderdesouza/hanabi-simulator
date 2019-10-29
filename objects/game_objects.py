@@ -9,8 +9,8 @@ class Card:
         self._true_suit = suit
         self._true_value = value
 
-        self._suspected_suit = None
-        self._suspected_value = None
+        self._suspected_suit = suit if random.random() > 0.5 else None
+        self._suspected_value = value if random.random() > 0.5 else None
 
     def __eq__(self, other):
         """Allows comparison of two instances of a card based on their true suits and values."""
@@ -104,14 +104,11 @@ class GameState:
         """Return a string representation of the self.piles object, which is a dict of lists."""
         return ' '.join([f'{suit}: {[p.__str__() for p in pile]}' for suit, pile in self.piles.items()])
 
-    def _are_all_piles_complete(self):
-        """Iterate over the self.piles object, and determine if the cards for a each suit have been played
+    def _is_suit_complete(self, pile):
+        """Iterate over a 'pile' of card objects, and determine if the cards for a each suit have been played
         sequentially.
         """
-        for suit, pile in self.piles.items():
-            if [card.value() for card in pile] != self.deck.CARD_VALUES_ARRAY:
-                return False
-        return True
+        return True if [card.value() for card in pile] == self.deck.CARD_VALUES_ARRAY else False
 
     def evaluate_game_state(self, current_player):
         """Deal an additional card to a player if needed and check whether or not the deck has been expired or the
@@ -129,5 +126,5 @@ class GameState:
         if self.mistakes == 0:
             self.is_game_over = True
 
-        if self._are_all_piles_complete():
+        if all([self._is_suit_complete(pile) for suit, pile in self.piles.items()]):
             self.is_game_over = True
