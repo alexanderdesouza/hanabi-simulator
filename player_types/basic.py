@@ -78,7 +78,7 @@ class Basic(Player):
 
     def _arrange_hand_by_value(self, hand):
         """Arrange cards in hand by value for cards for which that is known."""
-        return sorted(self.hand, key=lambda c: c.value(is_visible=False) if c.value(is_visible=False) is not None else 6)
+        return sorted(hand, key=lambda c: c.value(is_visible=False) if c.value(is_visible=False) is not None else 6)
 
     def _strategy(self, players, game):
         """This strategy prioritizes playing as follows: play a card if able; give a hint to another player if unable
